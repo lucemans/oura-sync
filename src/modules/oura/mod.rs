@@ -1,11 +1,13 @@
 use crate::{Error, models::oura::OuraMultiDocumentResponse, state::AppState};
 use async_std::sync::Mutex;
 use chrono::{DateTime, Duration, NaiveDate, Utc};
+use futures::join;
 use serde::{Deserialize, Serialize};
 use tracing::{error, info};
 
 pub mod cva;
 pub mod heart;
+pub mod readiness;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct OuraConfig {
@@ -22,6 +24,9 @@ pub struct OuraService {
 
     // Cardiovascular age
     pub cva_cursor: Mutex<NaiveDate>,
+
+    // Readiness
+    pub readiness_cursor: Mutex<NaiveDate>,
 }
 
 pub const DEFAULT_START_DATE: DateTime<Utc> = DateTime::from_timestamp_micros(0).unwrap();
@@ -32,20 +37,21 @@ impl OuraService {
 
         let heart_cursor = Mutex::new(start_date);
         let cva_cursor = Mutex::new(start_date.date_naive());
+        let readiness_cursor = Mutex::new(start_date.date_naive());
 
         Self {
             config,
             heart_cursor,
             heart_threshold_distance: Duration::minutes(15),
-            cva_cursor
+            cva_cursor,
+            readiness_cursor,
         }
     }
 
     pub async fn run(&self, state: AppState) {
         info!("Starting Oura service");
 
-        self.sync_cva(state).await;
-        // self.sync_heartrate(state.clone()).await;
+        join!(self.sync_cva(state.clone()), self.sync_heartrate(state.clone()), self.sync_readiness(state.clone()));
     }
 
     pub async fn get_datetime_range(
