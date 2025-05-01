@@ -8,6 +8,7 @@ use tracing::{error, info};
 pub mod cva;
 pub mod heart;
 pub mod readiness;
+pub mod sleep;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct OuraConfig {
@@ -17,7 +18,7 @@ pub struct OuraConfig {
 
 pub struct OuraService {
     pub config: OuraConfig,
-    
+
     // Heart rate
     pub heart_cursor: Mutex<DateTime<Utc>>,
     pub heart_threshold_distance: Duration,
@@ -27,6 +28,9 @@ pub struct OuraService {
 
     // Readiness
     pub readiness_cursor: Mutex<NaiveDate>,
+
+    // Sleep
+    pub sleep_cursor: Mutex<NaiveDate>,
 }
 
 pub const DEFAULT_START_DATE: DateTime<Utc> = DateTime::from_timestamp_micros(0).unwrap();
@@ -38,6 +42,7 @@ impl OuraService {
         let heart_cursor = Mutex::new(start_date);
         let cva_cursor = Mutex::new(start_date.date_naive());
         let readiness_cursor = Mutex::new(start_date.date_naive());
+        let sleep_cursor = Mutex::new(start_date.date_naive());
 
         Self {
             config,
@@ -45,13 +50,19 @@ impl OuraService {
             heart_threshold_distance: Duration::minutes(15),
             cva_cursor,
             readiness_cursor,
+            sleep_cursor,
         }
     }
 
     pub async fn run(&self, state: AppState) {
         info!("Starting Oura service");
 
-        join!(self.sync_cva(state.clone()), self.sync_heartrate(state.clone()), self.sync_readiness(state.clone()));
+        join!(
+            self.sync_cva(state.clone()),
+            self.sync_heartrate(state.clone()),
+            self.sync_readiness(state.clone()),
+            self.sync_sleep(state.clone())
+        );
     }
 
     pub async fn get_datetime_range(

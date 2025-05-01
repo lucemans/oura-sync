@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 pub mod heart;
 pub mod cva;
 pub mod readiness;
+pub mod sleep;
 
 /// Time series response for heart rate endpoint
 #[derive(Debug, Serialize, Deserialize)]

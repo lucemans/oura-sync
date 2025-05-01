@@ -19,6 +19,25 @@ Simple standalone CLI / Docker container to sync Oura data to influxdb.
   - `readiness.sleep_balance`
   - `readiness.temperature_deviation`
   - `readiness.temperature_trend_deviation`
+- [x] Sleep Routes
+  - `sleep.average_breath`
+  - `sleep.average_heart_rate`
+  - `sleep.average_hrv`
+  - `sleep.awake_time`
+  - `sleep.bedtime_end`
+  - `sleep.bedtime_start`
+  - `sleep.efficiency`
+  - `sleep.latency`
+  - `sleep.light_sleep_duration`
+  - `sleep.deep_sleep_duration`
+  - `sleep.rem_sleep_duration`
+  - `sleep.restless_periods`
+  - `sleep.total_sleep_duration`
+  - `sleep.time_in_bed`
+  - `sleep.sleep_algorithm_version`
+  - `sleep.sleep_score_delta`
+  - `sleep.sleep_phase_5_min`
+  - `sleep.type`
 - [ ] Resilience (Daily)
   - `resilience.level` "limited"
   - `resilience.sleep_recovery`
@@ -44,9 +63,6 @@ Simple standalone CLI / Docker container to sync Oura data to influxdb.
   - `stress.day_summary` "restored"
 - [ ] Enhanced Tags
 - [ ] Rest Mode Period
-- [ ] Sleep Routes
-- [ ] Sleep Time
-
 
 ## Alternatives
 
