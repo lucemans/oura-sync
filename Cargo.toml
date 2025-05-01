@@ -54,4 +54,7 @@ rrule = { version = "0.14.0", features = ["serde"] }
 moka = { version = "0.12.10", features = ["future"] }
 regex = "1.11.1"
 futures = "0.3.31"
-influxdb = { version = "0.7.2", features = ["derive"] }
+influxdb2 = { version = "0.5.2", features = ["rustls"], default-features = false }
+influxdb2-structmap = "0.2"
+influxdb2-derive = "0.1.1"
+num-traits = "0.2"

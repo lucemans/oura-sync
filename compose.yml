@@ -6,6 +6,13 @@ services:
       INFLUXDB_ORG: v3xlabs
       INFLUXDB_ADMIN_TOKEN: v3xlabs
       INFLUXDB_DB: oura-sync
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: wachtwoord
+      DOCKER_INFLUXDB_INIT_ORG: v3xlabs
+      DOCKER_INFLUXDB_INIT_BUCKET: oura-sync
+      DOCKER_INFLUXDB_INIT_RETENTION: 1w
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: v3xlabs
     ports:
       - "8086:8086"
     volumes:
@@ -15,7 +22,17 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "9000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=v3xlabs
+    volumes:
+      - grafana-data:/var/lib/grafana
 
 volumes:
   influxdb-data:
+    driver: local
+  grafana-data:
     driver: local

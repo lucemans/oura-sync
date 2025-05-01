@@ -1,15 +1,9 @@
-use crate::{database::Database, modules::oura::{OuraConfig, OuraService}};
+use crate::{database::{Database, DatabaseConfig}, modules::oura::{OuraConfig, OuraService}};
 use figment::{providers::Env, Figment};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
 pub type AppState = Arc<AppStateInner>;
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct DatabaseConfig {
-    pub url: String,
-    pub database_name: Option<String>,
-}
 
 pub struct AppStateInner {
     pub database: Database,
