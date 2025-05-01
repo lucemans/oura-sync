@@ -1,0 +1,21 @@
+name: oura-sync-dev
+services:
+  influxdb:
+    image: influxdb:2
+    environment:
+      INFLUXDB_ORG: v3xlabs
+      INFLUXDB_ADMIN_TOKEN: v3xlabs
+      INFLUXDB_DB: oura-sync
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    healthcheck:
+      test: ["CMD-SHELL", "influx ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  influxdb-data:
+    driver: local
