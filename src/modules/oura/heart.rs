@@ -17,25 +17,25 @@ impl OuraService {
         let resume_date = state.database.get_last_timestamp("heart").await.ok();
         if let Some(resume_date) = resume_date {
             info!("Resuming from {}", resume_date);
-            *self.cursor.lock().await = resume_date;
+            *self.heart_cursor.lock().await = resume_date;
         } else {
-            info!("Starting from {}", self.cursor.lock().await);
+            info!("Starting from {}", self.heart_cursor.lock().await);
         }
 
         loop {
             let now = Utc::now();
-            let start_date = *self.cursor.lock().await;
+            let start_date = *self.heart_cursor.lock().await;
             let end_date = if start_date == DEFAULT_START_DATE {
                 Some(DEFAULT_START_DATE + Duration::days(30))
             } else {
                 Some((start_date + chrono::Duration::days(1)).min(now))
             };
 
-            if start_date > now - self.threshold_distance
-                || end_date.unwrap_or(now) - start_date < self.threshold_distance
+            if start_date > now - self.heart_threshold_distance
+                || end_date.unwrap_or(now) - start_date < self.heart_threshold_distance
             {
                 info!("Waiting for threshold distance to pass");
-                sleep(self.threshold_distance.to_std().unwrap()).await;
+                sleep(self.heart_threshold_distance.to_std().unwrap()).await;
                 continue;
             }
 
@@ -44,7 +44,7 @@ impl OuraService {
                 .await
             {
                 Ok(_) => {
-                    let cursor = *self.cursor.lock().await;
+                    let cursor = *self.heart_cursor.lock().await;
                     info!("Indexed heartrate from {} to {}", start_date, cursor);
                     // *self.cursor.lock().await = end_date;
                 }
@@ -73,7 +73,7 @@ impl OuraService {
                 end_date
             );
             if let Some(end_date) = end_date {
-                *self.cursor.lock().await = end_date;
+                *self.heart_cursor.lock().await = end_date;
             }
 
             return Ok(());
@@ -112,7 +112,7 @@ impl OuraService {
             last_heartrate_timestamp, data.next_token
         );
 
-        *self.cursor.lock().await = last_heartrate_timestamp.to_utc() + Duration::seconds(1);
+        *self.heart_cursor.lock().await = last_heartrate_timestamp.to_utc() + Duration::seconds(1);
 
         Ok(())
     }

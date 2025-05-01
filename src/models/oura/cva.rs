@@ -1,18 +1,12 @@
-use std::fmt::Display;
-
 use serde::{Serialize, Deserialize};
-use chrono::{DateTime, FixedOffset};
+use chrono::NaiveDate;
 
-use super::OuraMultiDocumentResponse;
-
-/// Single heart rate data point
+/// Single cardiovascular age data point
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CardiovascularAgeModel {
     /// Vascular age
-    pub vascular_age: i64,
+    pub vascular_age: Option<i64>,
 
     /// Day of the measurement
-    pub day: DateTime<FixedOffset>,
+    pub day: NaiveDate,
 }
-
-pub type TimeSeriesResponseCardiovascularAgeModel = OuraMultiDocumentResponse<CardiovascularAgeModel>;
