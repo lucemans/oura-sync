@@ -19,13 +19,10 @@ pub async fn main() -> Result<(), Error> {
     let state = state::AppStateInner::init().await;
     let state = Arc::new(state);
 
-    let oura_state = state.clone();
-    let oura_handle = async_std::task::spawn(async move {
-        oura_state.clone().oura.run(oura_state).await;
-    });
-    let oura2_state = state.clone();
-    let server_handle = async_std::task::spawn(server::start_http(state.clone()));
+    let oura = state.oura.run(state.clone());
 
-    join!(server_handle, oura_handle);
+    let server = server::start_http(state.clone());
+
+    join!(server, oura);
     Ok(())
 }
