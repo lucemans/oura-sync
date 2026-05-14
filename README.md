@@ -2,6 +2,18 @@
 
 Simple standalone CLI / Docker container to sync Oura data to influxdb.
 
+## Configuration
+
+Configure the app with environment variables or a `.env` file in the project root. The following variables are supported:
+
+- `DATABASE_URL`: InfluxDB v2 endpoint (e.g. `http://localhost:8086`).
+- `DATABASE_ORG`: InfluxDB organization id.
+- `DATABASE_BUCKET`: InfluxDB bucket to write into (default: `oura-sync` if unset).
+- `DATABASE_TOKEN`: InfluxDB API token with write/query permissions.
+- `OURA_TOKEN`: Oura API token.
+- `OURA_START_DATE`: Optional start date for syncing (ISO 8601). If unset it starts from epoch.
+- `RUST_LOG`: Logging level (e.g. `info`, `debug`).
+
 ## Metrics
 
 - [x] Heart Rate (`heart.bpm`)
@@ -68,3 +80,4 @@ Simple standalone CLI / Docker container to sync Oura data to influxdb.
 
 - [nitobuendia/oura-custom-component](https://github.com/nitobuendia/oura-custom-component) - to home assistant (python)
 - [leshy/oura_sync](https://github.com/leshy/oura_sync/tree/main) - to influxdb (typescript)
+
